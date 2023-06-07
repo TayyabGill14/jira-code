@@ -1,0 +1,147 @@
+import java.util.Random;
+import java.util.Scanner;
+
+class Player {
+    private String name;
+    private int balance;
+    private int betAmount;
+
+    public Player(String name, int balance) {
+        this.name = name;
+        this.balance = balance;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBetAmount(int betAmount) {
+        this.betAmount = betAmount;
+    }
+
+    public int getBetAmount() {
+        return betAmount;
+    }
+
+    public void deductBalance(int amount) {
+        balance -= amount;
+    }
+
+    public void addBalance(int amount) {
+        balance += amount;
+    }
+}
+
+class Dice {
+    private Random random;
+
+    public Dice() {
+        random = new Random();
+    }
+
+    public int roll() {
+        return random.nextInt(6) + 1;
+    }
+}
+
+class GamblingGame {
+    private Player player;
+    private Dice dice;
+
+    public GamblingGame(Player player) {
+        this.player = player;
+        dice = new Dice();
+    }
+
+    public void play() {
+        System.out.println("Welcome to the Gambling Game, " + player.getName() + "!");
+
+        while (true) {
+            System.out.println("\nYour current balance is: $" + player.getBalance());
+
+            if (player.getBalance() <= 0) {
+                System.out.println("Insufficient balance to play. Game over!");
+                break;
+            }
+
+            System.out.print("Enter the bet amount (0 to quit): ");
+            int betAmount = getPlayerInput();
+
+            if (betAmount == 0) {
+                System.out.println("Thank you for playing!");
+                break;
+            }
+
+            if (betAmount > player.getBalance()) {
+                System.out.println("Insufficient balance to place the bet.");
+                continue;
+            }
+
+            player.setBetAmount(betAmount);
+            int diceValue = dice.roll();
+
+            System.out.println("You rolled a " + diceValue);
+
+            if (diceValue == 6) {
+                int winnings = betAmount * 2;
+                player.addBalance(winnings);
+                System.out.println("Congratulations! You won $" + winnings);
+            } else {
+                player.deductBalance(betAmount);
+                System.out.println("Better luck next time!");
+            }
+        }
+    }
+
+    private int getPlayerInput() {
+        Scanner scanner = new Scanner(System.in);
+        int input;
+
+        while (true) {
+            try {
+                input = Integer.parseInt(scanner.nextLine());
+                break;
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input. Please enter a valid number: ");
+            }
+        }
+
+        return input;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter your name: ");
+        String playerName = scanner.nextLine();
+
+        System.out.print("Enter your initial balance: ");
+        int initialBalance = getPlayerInput();
+
+        Player player = new Player(playerName, initialBalance);
+        GamblingGame game = new GamblingGame(player);
+        game.play();
+    }
+
+    private static int getPlayerInput() {
+        Scanner scanner = new Scanner(System.in);
+        int input;
+
+        while (true) {
+            try {
+                input = Integer.parseInt(scanner.nextLine());
+                break;
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input. Please enter a valid number: ");
+            }
+        }
+
+        return input;
+    }
+}
